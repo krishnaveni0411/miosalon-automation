@@ -1,0 +1,752 @@
+package membershipScenarios;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Random;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.Select;
+
+public class MembershipAllScenarios {
+	static ChromeDriver  driver;
+	static ChromeOptions  options;
+	
+public static void main(String[] args) throws InterruptedException {
+	options=new ChromeOptions();
+	options.addArguments("_disable-notifications", "--start-maximized", "--incognito");
+	driver=new ChromeDriver(options);
+	driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
+	driver.get("https://qa.miostack.com/");
+	driver.findElement(By.xpath("//a[text()='Login']")).click();
+	Thread.sleep(10000);
+	driver.findElement(By.xpath("//input[@id='username']")).sendKeys("krishnatestingqa@gmail.com");
+	driver.findElement(By.xpath("//input[@id='password']")).sendKeys("123456");
+    Thread.sleep(10000);
+    driver.findElement(By.xpath("//button[text()='Login']")).click();
+    // select the first branch
+    driver.findElement(By.xpath("//li[@class='ng-scope']")).click();
+    Thread.sleep(10000);
+    driver.findElement(By.xpath("//i[@class='font-icon fal fa-cog']")).click();
+    driver.findElement(By.xpath("//a[@package-label='DISCOUNT']")).click();
+    
+    // call the methods 
+    addServiceWithPercentage();
+    addServiceWithValue();
+    addProductWithPercentage();
+    addProductWithValue();
+    addServiceAndProductWithPercentage();
+    addServiceAndProductWithValue();
+    updateMembership();
+    deleteMembership();
+    errorMessageWhileCreating();
+    
+    // change branch 
+    Thread.sleep(5000);
+    driver.findElement(By.xpath("//button[@id='dd-user-menu']")).click();
+    driver.findElement(By.xpath("//a[@class='mio__cb-label']")).click();
+    driver.findElement(By.xpath("(//li[@class='ng-scope'])[2]")).click();
+    Thread.sleep(10000);
+    
+    // call the method for branch 2
+    addServiceWithPercentageInBranch2();
+    addServiceWithValueInBranch2();
+    addProductWithPercentageInBranch2();
+    addProductWithValueInBranch2();
+    addServiceAndProductWithPercentageInBranch2();
+    addServiceAndProductWithValueInBranch2();
+    updateMembershipInBranch2();
+    deleteMembershipInBranch2();
+    errorMessageWhileCreatingInBranch2();
+    
+    driver.close();
+}
+ private static String generateRandomName(int length) {
+    String characters = "abcdefghijklmnopqrstuvwxyz";
+    StringBuilder randomString = new StringBuilder(length);
+    Random ramdomName = new Random();
+
+    for (int i = 0; i < length; i++) {
+        randomString.append(characters.charAt(ramdomName.nextInt(characters.length())));
+    }
+
+    return randomString.toString();
+}
+ private static int generateRandomPrice() {
+        Random randomPrice = new Random();
+        return randomPrice.nextInt(1000)+1; // Adjust the range as needed
+    }
+ private static int generateRandomValidity() {
+        Random randomValidity = new Random();
+        return randomValidity.nextInt(365)+1; // Adjust the range as needed, now we will get the value from 1 to 365
+    }
+ private static int generateRandomPercentageValue() {
+        Random randomPercentageValue = new Random();
+        return randomPercentageValue.nextInt(50)+1; // Adjust the range as needed
+    }
+ 
+ public static void addServiceWithPercentage() throws InterruptedException{
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("GST(18)");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	 WebElement provideTheDiscountPercent = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountPercent.click();
+	 provideTheDiscountPercent.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountPercentage = generateRandomPercentageValue();
+	 provideTheDiscountPercent.sendKeys(String.valueOf(randomDiscountPercentage));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+	 /*// refresh the page
+		 driver.navigate().refresh();
+		 //get the number of membership 
+		 Thread.sleep(3000);
+		  List<WebElement> listOfMembership = driver.findElements(By.xpath("//table[@class='table ng-scope']/tbody/tr"));
+			 int numberOfMembership = listOfMembership.size();
+			  System.out.println("Number Of Membership : " + numberOfMembership);
+	 // get the details 
+			  driver.navigate().refresh();
+	 Thread.sleep(5000);
+	 List<WebElement> listOfMS = driver.findElements(By.xpath("//table[@class='table ng-scope']/tbody/tr"));
+	 String getTheMS = listOfMS.get(1).getText();
+	 System.out.println("Add Service With Discount Percentage");
+	 System.out.println("Added Membership : " + getTheMS); */
+	 
+ }
+ public static void addServiceWithValue() throws InterruptedException{
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("Not applicable");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	 //select the value and provide the value amount 
+	 WebElement selectTheDropDown = driver.findElement(By.xpath("//button[@data-id='discounttype']"));
+	 selectTheDropDown.click();
+	 WebElement selectPriceType = driver.findElement(By.xpath("//select[@id='discounttype']"));
+	 Select selectTheOption = new Select(selectPriceType);
+	 selectTheOption.selectByVisibleText("Value");
+	 WebElement provideTheDiscountvalue = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountvalue.click();
+	 provideTheDiscountvalue.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountvalue = generateRandomPercentageValue();
+	 provideTheDiscountvalue.sendKeys(String.valueOf(randomDiscountvalue));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+ }
+ public static void addProductWithPercentage() throws InterruptedException{
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("GST(18)");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	// select the item as product
+	// driver.findElement(By.xpath("//button[@data-id='itemtype']")).click();
+	 WebElement selectTheItemType = driver.findElement(By.xpath("//select[@id='itemtype']"));
+	 Select chooseTheItem= new Select(selectTheItemType);
+	 chooseTheItem.selectByVisibleText("Product");
+	 WebElement provideTheDiscountPercent = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountPercent.click();
+	 provideTheDiscountPercent.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountPercentage = generateRandomPercentageValue();
+	 provideTheDiscountPercent.sendKeys(String.valueOf(randomDiscountPercentage));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+ }
+ public static void addProductWithValue() throws InterruptedException{
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("Not applicable");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	// select the item as product
+	// driver.findElement(By.xpath("//button[@data-id='itemtype']")).click();
+	 WebElement selectTheItemType = driver.findElement(By.xpath("//select[@id='itemtype']"));
+	 Select chooseTheItem= new Select(selectTheItemType);
+	 chooseTheItem.selectByVisibleText("Product");
+	 //select the value and provide the value amount 
+	/* WebElement selectTheDropDown = driver.findElement(By.xpath("//button[@data-id='discounttype']"));
+	 selectTheDropDown.click();*/ 
+	 WebElement selectPriceType = driver.findElement(By.xpath("//select[@id='discounttype']"));
+	 Select selectTheOption = new Select(selectPriceType);
+	 selectTheOption.selectByVisibleText("Value");
+	 WebElement provideTheDiscountvalue = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountvalue.click();
+	 provideTheDiscountvalue.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountvalue = generateRandomPercentageValue();
+	 provideTheDiscountvalue.sendKeys(String.valueOf(randomDiscountvalue));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+	
+ }
+ public static void addServiceAndProductWithPercentage() throws InterruptedException{
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("GST(18)");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	 WebElement provideTheDiscountPercent = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountPercent.click();
+	 provideTheDiscountPercent.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountPercentage = generateRandomPercentageValue();
+	 provideTheDiscountPercent.sendKeys(String.valueOf(randomDiscountPercentage));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	// select the item as product
+		// driver.findElement(By.xpath("//button[@data-id='itemtype']")).click();
+		 WebElement selectTheItemType = driver.findElement(By.xpath("//select[@id='itemtype']"));
+		 Select chooseTheItem= new Select(selectTheItemType);
+		 chooseTheItem.selectByVisibleText("Product");
+		 WebElement provideTheDiscountPercentForProduct = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+		 provideTheDiscountPercentForProduct.click();
+		 provideTheDiscountPercentForProduct.clear();
+		 generateRandomPercentageValue();
+		 int randomDiscountPercentageForProduct = generateRandomPercentageValue();
+		 provideTheDiscountPercentForProduct.sendKeys(String.valueOf(randomDiscountPercentageForProduct));
+		 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+	
+ }
+ public static void addServiceAndProductWithValue() throws InterruptedException{
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("Not applicable");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	 //select the value and provide the value amount 
+	 WebElement selectTheDropDown = driver.findElement(By.xpath("//button[@data-id='discounttype']"));
+	 selectTheDropDown.click();
+	 WebElement selectPriceType = driver.findElement(By.xpath("//select[@id='discounttype']"));
+	 Select selectTheOption = new Select(selectPriceType);
+	 selectTheOption.selectByVisibleText("Value");
+	 WebElement provideTheDiscountvalue = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountvalue.click();
+	 provideTheDiscountvalue.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountvalue = generateRandomPercentageValue();
+	 provideTheDiscountvalue.sendKeys(String.valueOf(randomDiscountvalue));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	// select the item as product
+	// driver.findElement(By.xpath("//button[@data-id='itemtype']")).click();
+	 WebElement selectTheItemType = driver.findElement(By.xpath("//select[@id='itemtype']"));
+	 Select chooseTheItem= new Select(selectTheItemType);
+	 chooseTheItem.selectByVisibleText("Product");
+   //select the value and provide the value amount 
+	/* WebElement selectTheDropDownForProduct = driver.findElement(By.xpath("//button[@data-id='discounttype']"));
+	 selectTheDropDownForProduct.click(); */
+	 WebElement selectPriceTypeForProduct = driver.findElement(By.xpath("//select[@id='discounttype']"));
+	 Select selectTheOptionForProduct = new Select(selectPriceTypeForProduct);
+	 selectTheOptionForProduct.selectByVisibleText("Value");
+	 WebElement provideTheDiscountValueForProduct = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountValueForProduct.click();
+	 provideTheDiscountValueForProduct.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountValueForProduct = generateRandomPercentageValue();
+	 provideTheDiscountValueForProduct.sendKeys(String.valueOf(randomDiscountValueForProduct));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();		 
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+ /* // refresh the page
+	 driver.navigate().refresh();
+	 //get the number of membership 
+	 Thread.sleep(3000);
+	  List<WebElement> listOfMembership = driver.findElements(By.xpath("//table[@class='table ng-scope']/tbody/tr"));
+		 int numberOfMembership = listOfMembership.size();
+		  System.out.println("Number Of Membership : " + numberOfMembership);
+	 // get the details 
+	 Thread.sleep(5000);
+	 List<WebElement> listOfMS = driver.findElements(By.xpath("//table[@class='table ng-scope']/tbody/tr"));
+	 for (int i=0; i<2; i++) {
+			String getTheMS = listOfMS.get(i).getText();
+			System.out.println("Adding the membership with the service and product with discount value");
+			System.out.println("Added Membership : " + getTheMS); 
+			 
+		}
+	 String getTheMS = listOfMS.get(1).getText();
+	 System.out.println("Add Service With Discount Value");
+	 System.out.println("Added Membership : " + getTheMS); */
+	
+ }
+ public static void updateMembership() throws InterruptedException{
+	 Thread.sleep(2000);
+	WebElement listOfMembership = driver.findElement(By.xpath("//table[@class='table ng-scope']/tbody/tr[1]"));
+	 listOfMembership.click();
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Update']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+	 System.out.println("the seleccted membership is updated");
+ }
+ public static void deleteMembership() throws InterruptedException{
+	 Thread.sleep(2000);
+	 List<WebElement> listOfMembership = driver.findElements(By.xpath("//table[@class='table ng-scope']/tbody/tr"));
+	 listOfMembership.get(1).click();
+	 driver.findElement(By.xpath("//button[text()='Delete']")).click();
+	 driver.findElement(By.xpath("//input[@id='confirmCkeck']")).click();
+	 driver.findElement(By.xpath("(//button[text()='Delete'])[last()]")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+	 System.out.println("the seleccted membership is deleted");
+	 
+ }
+ public static void errorMessageWhileCreating() throws InterruptedException{
+	 Thread.sleep(5000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String errorInTheName = driver.findElement(By.xpath("//small[@class='error ng-scope']")).getText();
+     System.out.println("error In The Name Of The Membership : " + errorInTheName);
+     String errorInThevalue = driver.findElement(By.xpath("(//small[@class='error ng-scope'])[2]")).getText();
+     System.out.println("error In The price Of The Membership : " + errorInThevalue);
+     String errorInThevalidity = driver.findElement(By.xpath("(//small[@class='error ng-scope'])[last()]")).getText();
+     System.out.println("error In The validity Of The Membership : " + errorInThevalidity);
+     driver.findElement(By.xpath("//button[text()='Cancel']")).click();
+   
+ 
+ }
+
+ // add, update and delete membership in branch 2
+ public static void addServiceWithPercentageInBranch2() throws InterruptedException{
+	Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("GST(18)");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	 WebElement provideTheDiscountPercent = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountPercent.click();
+	 provideTheDiscountPercent.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountPercentage = generateRandomPercentageValue();
+	 provideTheDiscountPercent.sendKeys(String.valueOf(randomDiscountPercentage));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+	/*// refresh the page
+		 driver.navigate().refresh();
+		 //get the number of membership 
+		 Thread.sleep(3000);
+		  List<WebElement> listOfMembership = driver.findElements(By.xpath("//table[@class='table ng-scope']/tbody/tr"));
+			 int numberOfMembership = listOfMembership.size();
+			  System.out.println("Number Of Membership : " + numberOfMembership);
+	 // get the details 
+			  driver.navigate().refresh();
+	 Thread.sleep(5000);
+	 List<WebElement> listOfMS = driver.findElements(By.xpath("//table[@class='table ng-scope']/tbody/tr"));
+	 String getTheMS = listOfMS.get(1).getText();
+	 System.out.println("Add Service With Discount Percentage");
+	 System.out.println("Added Membership : " + getTheMS); */
+	 
+ }
+ public static void addServiceWithValueInBranch2() throws InterruptedException{
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("Not applicable");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	 //select the value and provide the value amount 
+	 WebElement selectTheDropDown = driver.findElement(By.xpath("//button[@data-id='discounttype']"));
+	 selectTheDropDown.click();
+	 WebElement selectPriceType = driver.findElement(By.xpath("//select[@id='discounttype']"));
+	 Select selectTheOption = new Select(selectPriceType);
+	 selectTheOption.selectByVisibleText("Value");
+	 WebElement provideTheDiscountvalue = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountvalue.click();
+	 provideTheDiscountvalue.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountvalue = generateRandomPercentageValue();
+	 provideTheDiscountvalue.sendKeys(String.valueOf(randomDiscountvalue));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+	 
+ }
+ public static void addProductWithPercentageInBranch2() throws InterruptedException{
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("GST(18)");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	// select the item as product
+	// driver.findElement(By.xpath("//button[@data-id='itemtype']")).click();
+	 WebElement selectTheItemType = driver.findElement(By.xpath("//select[@id='itemtype']"));
+	 Select chooseTheItem= new Select(selectTheItemType);
+	 chooseTheItem.selectByVisibleText("Product");
+	 WebElement provideTheDiscountPercent = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountPercent.click();
+	 provideTheDiscountPercent.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountPercentage = generateRandomPercentageValue();
+	 provideTheDiscountPercent.sendKeys(String.valueOf(randomDiscountPercentage));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+	 
+ }
+ public static void addProductWithValueInBranch2() throws InterruptedException{
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("Not applicable");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	// select the item as product
+	// driver.findElement(By.xpath("//button[@data-id='itemtype']")).click();
+	 WebElement selectTheItemType = driver.findElement(By.xpath("//select[@id='itemtype']"));
+	 Select chooseTheItem= new Select(selectTheItemType);
+	 chooseTheItem.selectByVisibleText("Product");
+	 //select the value and provide the value amount 
+	/* WebElement selectTheDropDown = driver.findElement(By.xpath("//button[@data-id='discounttype']"));
+	 selectTheDropDown.click();*/ 
+	 WebElement selectPriceType = driver.findElement(By.xpath("//select[@id='discounttype']"));
+	 Select selectTheOption = new Select(selectPriceType);
+	 selectTheOption.selectByVisibleText("Value");
+	 WebElement provideTheDiscountvalue = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountvalue.click();
+	 provideTheDiscountvalue.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountvalue = generateRandomPercentageValue();
+	 provideTheDiscountvalue.sendKeys(String.valueOf(randomDiscountvalue));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+ }
+ public static void addServiceAndProductWithPercentageInBranch2() throws InterruptedException{
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("GST(18)");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	 WebElement provideTheDiscountPercent = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountPercent.click();
+	 provideTheDiscountPercent.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountPercentage = generateRandomPercentageValue();
+	 provideTheDiscountPercent.sendKeys(String.valueOf(randomDiscountPercentage));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	// select the item as product
+		// driver.findElement(By.xpath("//button[@data-id='itemtype']")).click();
+		 WebElement selectTheItemType = driver.findElement(By.xpath("//select[@id='itemtype']"));
+		 Select chooseTheItem= new Select(selectTheItemType);
+		 chooseTheItem.selectByVisibleText("Product");
+		 WebElement provideTheDiscountPercentForProduct = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+		 provideTheDiscountPercentForProduct.click();
+		 provideTheDiscountPercentForProduct.clear();
+		 generateRandomPercentageValue();
+		 int randomDiscountPercentageForProduct = generateRandomPercentageValue();
+		 provideTheDiscountPercentForProduct.sendKeys(String.valueOf(randomDiscountPercentageForProduct));
+		 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+	
+ }
+ public static void addServiceAndProductWithValueInBranch2() throws InterruptedException{
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 WebElement provideName = driver.findElement(By.xpath("//input[@data-ng-model='membership.name']"));
+	 provideName.click();
+	 generateRandomName(6);
+	 String randomNameOfTheMS= generateRandomName(6);
+	 provideName.sendKeys(randomNameOfTheMS);
+	 WebElement ProvidePrice = driver.findElement(By.xpath("//input[@data-ng-model='membership.price']"));
+	 ProvidePrice.click();
+	 generateRandomPrice();
+	 int randomPriceOfTheMS= generateRandomPrice();
+	 ProvidePrice.sendKeys(String.valueOf(randomPriceOfTheMS));
+	 WebElement tax = driver.findElement(By.xpath("//select[@name='tax']"));
+	 Select selectTheTax =new Select(tax);
+	 selectTheTax.selectByVisibleText("Not applicable");
+	 WebElement provideValidity = driver.findElement(By.xpath("//input[@data-ng-model='membership.validity_days']"));
+	 provideValidity.click();
+	 generateRandomValidity();
+	 int randomValidity = generateRandomValidity();
+	 provideValidity.sendKeys(String.valueOf(randomValidity));
+	 //select the value and provide the value amount 
+	 WebElement selectTheDropDown = driver.findElement(By.xpath("//button[@data-id='discounttype']"));
+	 selectTheDropDown.click();
+	 WebElement selectPriceType = driver.findElement(By.xpath("//select[@id='discounttype']"));
+	 Select selectTheOption = new Select(selectPriceType);
+	 selectTheOption.selectByVisibleText("Value");
+	 WebElement provideTheDiscountvalue = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountvalue.click();
+	 provideTheDiscountvalue.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountvalue = generateRandomPercentageValue();
+	 provideTheDiscountvalue.sendKeys(String.valueOf(randomDiscountvalue));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();
+	// select the item as product
+	// driver.findElement(By.xpath("//button[@data-id='itemtype']")).click();
+	 WebElement selectTheItemType = driver.findElement(By.xpath("//select[@id='itemtype']"));
+	 Select chooseTheItem= new Select(selectTheItemType);
+	 chooseTheItem.selectByVisibleText("Product");
+   //select the value and provide the value amount 
+	/* WebElement selectTheDropDownForProduct = driver.findElement(By.xpath("//button[@data-id='discounttype']"));
+	 selectTheDropDownForProduct.click(); */
+	 WebElement selectPriceTypeForProduct = driver.findElement(By.xpath("//select[@id='discounttype']"));
+	 Select selectTheOptionForProduct = new Select(selectPriceTypeForProduct);
+	 selectTheOptionForProduct.selectByVisibleText("Value");
+	 WebElement provideTheDiscountValueForProduct = driver.findElement(By.xpath("(//div[@class='input-group']/input[@type='number'])[2]"));
+	 provideTheDiscountValueForProduct.click();
+	 provideTheDiscountValueForProduct.clear();
+	 generateRandomPercentageValue();
+	 int randomDiscountValueForProduct = generateRandomPercentageValue();
+	 provideTheDiscountValueForProduct.sendKeys(String.valueOf(randomDiscountValueForProduct));
+	 driver.findElement(By.xpath("//button[text()='Apply All']")).click();		 
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+ /* // refresh the page
+	 driver.navigate().refresh();
+	 //get the number of membership 
+	 Thread.sleep(3000);
+	  List<WebElement> listOfMembership = driver.findElements(By.xpath("//table[@class='table ng-scope']/tbody/tr"));
+		 int numberOfMembership = listOfMembership.size();
+		  System.out.println("Number Of Membership : " + numberOfMembership);
+	 // get the details 
+	 Thread.sleep(5000);
+	 List<WebElement> listOfMS = driver.findElements(By.xpath("//table[@class='table ng-scope']/tbody/tr"));
+	 for (int i=0; i<2; i++) {
+			String getTheMS = listOfMS.get(i).getText();
+			System.out.println("Adding the membership with the service and product with discount value");
+			System.out.println("Added Membership : " + getTheMS); 
+			 
+		}
+	 String getTheMS = listOfMS.get(1).getText();
+	 System.out.println("Add Service With Discount Value");
+	 System.out.println("Added Membership : " + getTheMS); */
+	
+ }
+ public static void updateMembershipInBranch2() throws InterruptedException{
+	 Thread.sleep(2000);
+	 List<WebElement> listOfMembership = driver.findElements(By.xpath("//table[@class='table ng-scope']/tbody/tr"));
+	 listOfMembership.get(1).click();
+	 driver.findElement(By.xpath("//button[text()='Update']")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+	 System.out.println("the seleccted membership is updated"); 
+ }
+ public static void deleteMembershipInBranch2() throws InterruptedException{
+	 Thread.sleep(2000);
+	 List<WebElement> listOfMembership = driver.findElements(By.xpath("//table[@class='table ng-scope']/tbody/tr"));
+	 listOfMembership.get(1).click();
+	 driver.findElement(By.xpath("//button[text()='Delete']")).click();
+	 driver.findElement(By.xpath("//input[@id='confirmCkeck']")).click();
+	 driver.findElement(By.xpath("(//button[text()='Delete'])[last()]")).click();
+	 String getTheSuccessMessage = driver.findElement(By.xpath("//span[@data-notify='title']")).getText();
+	 driver.findElement(By.xpath("//button[@class='close']")).click();
+	System.out.println("Get The Success Message : " + getTheSuccessMessage);
+	 System.out.println("the seleccted membership is deleted"); 
+ }
+ public static void errorMessageWhileCreatingInBranch2() throws InterruptedException{
+	 Thread.sleep(2000);
+	 driver.findElement(By.xpath("//button[text()='Add Discount Membership']")).click();
+	 driver.findElement(By.xpath("//button[text()='Save']")).click();
+	 String errorInTheName = driver.findElement(By.xpath("//small[@class='error ng-scope']")).getText();
+     System.out.println("error In The Name Of The Membership : " + errorInTheName);
+     String errorInThevalue = driver.findElement(By.xpath("(//small[@class='error ng-scope'])[2]")).getText();
+     System.out.println("error In The price Of The Membership : " + errorInThevalue);
+     String errorInThevalidity = driver.findElement(By.xpath("(//small[@class='error ng-scope'])[last()]")).getText();
+     System.out.println("error In The validity Of The Membership : " + errorInThevalidity);
+     driver.findElement(By.xpath("//button[text()='Cancel']")).click();
+     
+ }
+
+}
